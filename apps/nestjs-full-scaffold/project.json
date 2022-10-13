@@ -1,0 +1,60 @@
+{
+  "name": "nestjs-full-scaffold",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/nestjs-full-scaffold/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/nestjs-full-scaffold",
+        "main": "apps/nestjs-full-scaffold/src/main.ts",
+        "tsConfig": "apps/nestjs-full-scaffold/tsconfig.app.json",
+        "assets": ["apps/nestjs-full-scaffold/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/nestjs-full-scaffold/src/environments/environment.ts",
+              "with": "apps/nestjs-full-scaffold/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "options": {
+        "buildTarget": "nestjs-full-scaffold:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "nestjs-full-scaffold:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/nestjs-full-scaffold/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/nestjs-full-scaffold"],
+      "options": {
+        "jestConfig": "apps/nestjs-full-scaffold/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

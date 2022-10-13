@@ -1,0 +1,10 @@
+GET http://localhost:3335/nestjs-full-scaffold/env-example?duration=3000
+###
+GET http://localhost:3335/nestjs-full-scaffold/env-example?duration=30
+
+
+###
+GET http://localhost:3335/nestjs-full-scaffold/exception-example
+
+###
+GET http://localhost:3335/nestjs-full-scaffold/env-example-use-raw-response?x=2
