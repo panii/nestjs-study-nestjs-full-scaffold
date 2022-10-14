@@ -32,6 +32,11 @@ export class AppController {
     res.header('Content-type', 'application/json; charset=utf-8').status(HttpStatus.OK).send(JSON.stringify(data, null, 2));
   }
 
+  @Get('/benchmark/hello-world')
+  benchmarkHelloWorld() {
+    return {'hello':'world'};
+  }
+
   _getData2() {
     return this.appService.getData();
   }

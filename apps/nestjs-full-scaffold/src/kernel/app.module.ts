@@ -148,7 +148,7 @@ export class AppModule implements NestModule {
         RequestContextMiddleware,
         HttpMiddleware // log every coming request
       )
-      .exclude('benchmark/(.*)')
+      .exclude(`/${GlobalVars.appName}/benchmark/(.*)`)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

@@ -11,3 +11,6 @@ GET http://localhost:3335/nestjs-full-scaffold/env-example-use-raw-response?x=2
 
 ###
 GET http://localhost:3335/nestjs-full-scaffold/should-return-not-found
+
+###
+GET http://localhost:3335/nestjs-full-scaffold/benchmark/hello-world

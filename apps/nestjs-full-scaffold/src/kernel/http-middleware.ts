@@ -11,7 +11,7 @@ export class HttpMiddleware implements NestMiddleware {
     ip = ip.toString().replace('::ffff:', '');
     Logger.log('http start', { url: req.url, ip: ip, http_method: req.method, referrer: req.get('Referrer') });
 
-    res.header('RequestId', this.count.toString());
+    res.header('X-Request-Id', this.count.toString());
     next();
   }
 }
