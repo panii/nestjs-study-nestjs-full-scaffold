@@ -23,4 +23,7 @@
 
 > 请求级别的全局变量, 如唯一的请求id(链路id), 应该要在任意文件中获取到, 而不是把request变量到处传, 破坏代码结构. 在response的头中也添加请求id(链路id)
 > npm i nestjs-request-context
+
+> mail
+> queue
 ```

@@ -31,7 +31,7 @@ export class LoggerProxy {
   static newContext(context) {
     let addForLogger;
     if (LoggerProxy.inited) {
-      addForLogger = {request_id: RequestContext.currentContext.req.request_id, ...GlobalVars.getForLogger()};
+      addForLogger = {request_id: RequestContext.currentContext.req.request_id, url: RequestContext.currentContext.req.url, ...GlobalVars.getForLogger()};
     } else {
       addForLogger = GlobalVars.getForLogger();
     }
