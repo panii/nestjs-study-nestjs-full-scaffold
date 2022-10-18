@@ -11,9 +11,10 @@ import { GlobalVars } from './global.vars';
 import { environment } from '../environments/environment';
 import { AppController } from './controllers/app.controller';
 import { AppService } from './services/app.service';
-import { ApiConfigService } from './services/api.config.service';
+import { ApiGetterService } from './services/api.getter.service';
 import { HttpMiddleware } from './middlewares/http-middleware';
-import base from './configs/base.configuration';
+import baseConfiguration from './configs/base.configuration';
+import otherConfiguration from './configs/other.configuration';
 import * as os from 'os';
 
 import { sep, resolve } from 'path';
@@ -27,9 +28,9 @@ GlobalVars.osHostName = os.hostname();
     // env support
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [base],
+      load: [baseConfiguration, otherConfiguration],
       envFilePath: ['.env.development.local', '.env.development', '.env'].map((fileName) => resolve('dist', 'envs', GlobalVars.appName as string, fileName)),
-      cache: true,
+      cache: true, // As accessing process.env can be slow, you can set the cache property of the options object passed to ConfigModule.forRoot() to increase the performance of ConfigService#get method when it comes to variables stored in process.env
       expandVariables: true,
     }),
     // daily logger support
@@ -118,7 +119,7 @@ GlobalVars.osHostName = os.hostname();
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ApiConfigService],
+  providers: [AppService, ApiGetterService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
