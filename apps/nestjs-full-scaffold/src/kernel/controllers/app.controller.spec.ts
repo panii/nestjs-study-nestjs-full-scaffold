@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '../controllers/app.controller';
+import { AppService } from '../services/app.service';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -16,7 +16,7 @@ describe('AppController', () => {
   describe('getData', () => {
     it('should return "Welcome to nestjs-full-scaffold!"', () => {
       const appController = app.get<AppController>(AppController);
-      expect(appController._getData()).toEqual({
+      expect(appController._getData(1)).toEqual({
         message: 'Welcome to nestjs-full-scaffold!',
       });
     });

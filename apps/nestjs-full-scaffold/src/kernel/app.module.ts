@@ -5,14 +5,14 @@ import { format, transports } from 'winston';
 const { combine, timestamp, metadata, label, printf, json, colorize } = format;
 import { WinstonModule } from 'nest-winston';
 import DailyRotateFile = require('winston-daily-rotate-file');
-import TransportStream = require("winston-transport");
+import TransportStream = require('winston-transport');
 
 import { GlobalVars } from './global.vars';
 import { environment } from '../environments/environment';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ApiConfigService } from './api.config.service';
-import { HttpMiddleware } from './http-middleware';
+import { AppController } from './controllers/app.controller';
+import { AppService } from './services/app.service';
+import { ApiConfigService } from './services/api.config.service';
+import { HttpMiddleware } from './middlewares/http-middleware';
 import base from './configs/base.configuration';
 import * as os from 'os';
 
@@ -24,7 +24,7 @@ GlobalVars.osHostName = os.hostname();
 
 @Module({
   imports: [
-    // env support 
+    // env support
     ConfigModule.forRoot({
       isGlobal: true,
       load: [base],
@@ -35,14 +35,23 @@ GlobalVars.osHostName = os.hostname();
     // daily logger support
     WinstonModule.forRoot({
       transports: [
-        ...(function() : TransportStream[] {
-           
+        ...(function (): TransportStream[] {
           const application_log_to_file = process.env.APPLICATION_LOG_TO_FILE;
           const log_locale = process.env.LOG_LOCALE;
           const log_timezone = process.env.LOG_TIMEZONE;
           const application_log_dir = process.env.APPLICATION_LOG_DIR;
           const application_log_filename = process.env.APPLICATION_LOG_FILENAME;
           const application_error_log_filename = process.env.APPLICATION_ERROR_LOG_FILENAME;
+          const dateTimeFormatOptions = {
+            timeZone: log_timezone,
+            hourCycle: 'h23',
+            year: 'numeric',
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          };
 
           if (application_log_to_file === 'yes' && log_locale && log_timezone && application_log_dir && application_log_filename && application_error_log_filename) {
             return [
@@ -51,16 +60,7 @@ GlobalVars.osHostName = os.hostname();
                   // label({ label: 'global-log' }),
                   timestamp({
                     format: () => {
-                      return new Date().toLocaleString(log_locale, {
-                        timeZone: log_timezone,
-                        hourCycle: 'h23',
-                        year: 'numeric',
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                      });
+                      return new Date().toLocaleString(log_locale, dateTimeFormatOptions as Intl.DateTimeFormatOptions);
                     },
                   }),
                   json()
@@ -78,16 +78,7 @@ GlobalVars.osHostName = os.hostname();
                   // label({ label: 'global-error-log' }),
                   timestamp({
                     format: () => {
-                      return new Date().toLocaleString(log_locale, {
-                        timeZone: log_timezone,
-                        hourCycle: 'h23',
-                        year: 'numeric',
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                      });
+                      return new Date().toLocaleString(log_locale, dateTimeFormatOptions as Intl.DateTimeFormatOptions);
                     },
                   }),
                   json()
@@ -97,44 +88,32 @@ GlobalVars.osHostName = os.hostname();
                 datePattern: 'YYYY-MM-DD',
                 level: 'error',
               }),
-            ]
+              ...(!environment.production
+                ? [
+                    new transports.Console({
+                      format: combine(
+                        colorize(),
+                        label({ label: 'console.log' }),
+                        metadata(),
+                        timestamp({
+                          format: () => {
+                            return new Date().toLocaleString(log_locale, dateTimeFormatOptions as Intl.DateTimeFormatOptions);
+                          },
+                        }),
+                        printf((info) => {
+                          const { level, message, metadata, timestamp } = info;
+                          // console.log(info)
+                          return `${timestamp} [${metadata.label}] ${level}: ${message} ` + JSON.stringify(metadata.context) + ` ${level.indexOf('error') !== -1 ? JSON.stringify(metadata.stack) : ''}`;
+                        })
+                      ),
+                    }),
+                  ]
+                : []),
+            ];
           } else {
             return [];
           }
-        }()),
-        ...(!environment.production
-          ? [
-              new transports.Console({
-                format: combine(
-                  colorize(),
-                  label({ label: 'console.log' }),
-                  metadata(),
-                  timestamp({
-                    format: () => {
-                      return new Date().toLocaleString(process.env.LOG_LOCALE, {
-                        timeZone: process.env.LOG_TIMEZONE,
-                        hourCycle: 'h23',
-                        year: 'numeric',
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                      });
-                    },
-                  }),
-                  printf((info) => {
-                    const { level, message, metadata, timestamp } = info;
-                    // console.log(info)
-                    if (level.indexOf('error') !== -1) {
-                      return `${timestamp} [${metadata.label}] ${level}: ${message} ` + JSON.stringify(metadata.context) + ` ` + JSON.stringify(metadata.stack) + ``;
-                    }
-                    return `${timestamp} [${metadata.label}] ${level}: ${message} ` + JSON.stringify(metadata.context) + ``;
-                  })
-                )
-              }),
-            ]
-          : []),
+        })(),
       ],
     }),
   ],

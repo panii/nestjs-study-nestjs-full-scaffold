@@ -5,9 +5,9 @@ import { RequestContext } from 'nestjs-request-context';
 // import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
-import { GlobalVars } from './global.vars';
+import { GlobalVars } from '../global.vars';
 import { ApiConfigService } from './api.config.service';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
@@ -15,12 +15,21 @@ import { environment } from '../environments/environment';
 })
 export class AppService {
   private isAbc = false;
+  private thisIsKernelBaseConfigurationKey: string;
 
   constructor(@Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService, private readonly configService: ConfigService, private readonly apiConfigService: ApiConfigService) {
     console.log("new AppService");
     if (this.apiConfigService.isAbc) {
       this.isAbc = true;
     }
+
+    // If any of the environment variables are missing, the server will fail the startup process including the error message
+    const thisIsKernelBaseConfigurationKey = this.configService.get<string>('level1.level2');
+    if (!thisIsKernelBaseConfigurationKey) {
+      throw new Error(`level1.level2 Environment variables are missing`);
+    }
+
+    this.thisIsKernelBaseConfigurationKey = thisIsKernelBaseConfigurationKey;
   }
 
   getData(): {
@@ -33,9 +42,6 @@ export class AppService {
     some_service_related_key?: string;
     request_id?: string;
   } {
-    // const port = this.configService.get<string>('PORT');
-    // const env_key = this.configService.get<string>('ENV_KEY');
-    const some_service_related_key = this.configService.get<string>('level1.level2');
     const context = 'xxxlo';
     this.logger.log('a log message', context);
     Logger.log('a log message', context);
@@ -59,7 +65,7 @@ export class AppService {
       some_secret_key_in_env_file: process.env.SOME_SECRET_KEY_IN_ENV,
       some_secret_key2_in_env_file: process.env.SOME_SECRET_KEY2_IN_ENV,
       some_secret_key3_in_env_file: process.env.SOME_SECRET_KEY3_IN_ENV,
-      some_service_related_key: some_service_related_key,
+      some_service_related_key: this.thisIsKernelBaseConfigurationKey,
       request_id: RequestContext.currentContext.req.request_id
     };
   }

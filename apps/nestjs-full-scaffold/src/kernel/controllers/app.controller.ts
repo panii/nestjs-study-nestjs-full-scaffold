@@ -1,8 +1,8 @@
 import { Controller, Get, Req, Res, HttpStatus, HttpException } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-import { AppService } from './app.service';
-import { GlobalVars } from './global.vars';
+import { AppService } from '../services/app.service';
+import { GlobalVars } from '../global.vars';
 
 @Controller()
 export class AppController {

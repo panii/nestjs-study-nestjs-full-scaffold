@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { GlobalVars } from './global.vars';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { WinstonLogger } from 'nest-winston/dist/winston.classes';
@@ -11,7 +12,7 @@ export class LoggerProxy {
   static oldErrorFn: any;
   static inited = false;
 
-  static proxyLogger(app) {
+  static proxyLogger(app:INestApplication) {
     const oldLogger: WinstonLogger = app.get(WINSTON_MODULE_NEST_PROVIDER);
     LoggerProxy.oldLogFn = oldLogger.log;
     LoggerProxy.oldWarnFn = oldLogger.warn;

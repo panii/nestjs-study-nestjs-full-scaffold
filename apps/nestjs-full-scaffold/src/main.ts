@@ -5,8 +5,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './kernel/app.module';
 import { GlobalVars } from './kernel/global.vars';
 import { LoggerProxy } from './kernel/logger-proxy';
-import { HttpInterceptor } from './kernel/http-interceptor';
-import { HttpExceptionFilter } from './kernel/http-exception.filter';
+import { HttpInterceptor } from './kernel/interceptors/http-interceptor';
+import { HttpExceptionFilter } from './kernel/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
