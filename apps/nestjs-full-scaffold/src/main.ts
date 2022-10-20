@@ -15,8 +15,8 @@ async function bootstrap() {
   // const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new HttpExceptionFilter());
   app.setGlobalPrefix(GlobalVars.appName);
-  app.getHttpAdapter().getInstance().set('json spaces', 2); // global echo pretty json
-  const port = process.env.PORT || 3333;
+  app.getHttpAdapter().getInstance().set('json spaces', 2); // when use express, you can globally print pretty json
+  const port = process.env.PORT || 3335;
   const server = await app.listen(port);
   server.timeout = 1000 + parseInt(process.env.TCP_TIMEOUT as string); // tcp timeout set to X
   // const configService = app.get(ConfigService);
@@ -24,6 +24,8 @@ async function bootstrap() {
   const tm = process.env.TM || '';
   Logger.log(`🚀 ${tm} Application is running on: http://localhost:${port}/${GlobalVars.appName}`);
   LoggerProxy.inited = true;
+
+  if (process.send) process.send('ready') // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
 }
 
 bootstrap();

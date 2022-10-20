@@ -55,6 +55,12 @@ GlobalVars.osHostName = os.hostname();
           };
 
           if (application_log_to_file === 'yes' && log_locale && log_timezone && application_log_dir && application_log_filename && application_error_log_filename) {
+            const instanceId = parseInt(process.env.INSTANCE_ID + ""); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
+            const fname = `${application_log_dir}[${GlobalVars.appName}]-${application_log_filename}-cpu${instanceId}-%DATE%.json`;
+            const fname2 = `${application_log_dir}[${GlobalVars.appName}]-${application_error_log_filename}-cpu${instanceId}-%DATE%.json`;
+            console.log(`Application log file: ${fname}`); // pm2 logs
+            console.log(`Application error log file: ${fname2}`);
+
             return [
               new DailyRotateFile({
                 format: combine(
@@ -67,7 +73,7 @@ GlobalVars.osHostName = os.hostname();
                   json()
                 ),
                 //handleExceptions: true, // With winston, it is possible to catch and log uncaughtException events from your process
-                filename: `${application_log_dir}[${GlobalVars.appName}]-${application_log_filename}-%DATE%.json`,
+                filename: fname,
                 datePattern: 'YYYY-MM-DD',
                 level: 'debug',
                 //zippedArchive: true,
@@ -85,7 +91,7 @@ GlobalVars.osHostName = os.hostname();
                   json()
                 ),
                 //handleExceptions: true, // With winston, it is possible to catch and log uncaughtException events from your process
-                filename: `${application_log_dir}[${GlobalVars.appName}]-${application_error_log_filename}-%DATE%.json`,
+                filename: fname2,
                 datePattern: 'YYYY-MM-DD',
                 level: 'error',
               }),
