@@ -17,16 +17,6 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.setGlobalPrefix(GlobalVars.appName);
   app.getHttpAdapter().getInstance().set('json spaces', 2); // when use express, you can globally print pretty json
-  app.connectMicroservice(
-    {
-      transport: Transport.MQTT,
-      options: {
-        url: 'mqtt://127.0.0.1:1883',
-      },
-    },
-    // { inheritAppConfig: true }
-  );
-  await app.startAllMicroservices();
   const port = process.env.PORT || 3335;
   const server = await app.listen(port);
   server.timeout = 1000 + parseInt(process.env.TCP_TIMEOUT as string); // tcp timeout set to X
@@ -35,6 +25,18 @@ async function bootstrap() {
   const tm = process.env.TM || '';
   Logger.log(`🚀 ${tm} Application is running on: http://localhost:${port}/${GlobalVars.appName}`);
   LoggerProxy.inited = true;
+
+  app.connectMicroservice(
+    {
+      transport: Transport.MQTT,
+      options: {
+        url: 'mqtt://127.0.0.1:1883',
+        // protocolVersion: 5,
+      },
+    },
+    // { inheritAppConfig: true }
+  );
+  await app.startAllMicroservices();
 
   if (process.send) process.send('ready'); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
 }

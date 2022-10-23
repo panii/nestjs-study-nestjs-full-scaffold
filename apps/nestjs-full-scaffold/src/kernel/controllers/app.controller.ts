@@ -38,7 +38,7 @@ export class AppController {
 
   @Get('/benchmark/hello-world')
   benchmarkHelloWorld() {
-    const userProperties = { 'x-version': '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111.0.0' };
+    const userProperties = { 'x-version': '1.0.0' }; // protocolVersion: 5 , only mqtt 5 support extra properties
     const record = new MqttRecordBuilder('hahaha, this is mqtt message').setProperties({ userProperties }).setQoS(2).build();
     console.log(record);
     this.mqttClient.emit('mqtt_event_1', record);
@@ -52,8 +52,8 @@ export class AppController {
     console.log(`Packet: ${context.getPacket()} ==> `);
     console.log(context.getPacket());
     console.log(data);
-    const { properties: { userProperties } } = context.getPacket();
-    console.log(`x-version: ${userProperties['x-version']}`);
+    // const { properties: { userProperties } } = context.getPacket(); // protocolVersion: 5 , only mqtt 5 support extra properties
+    // console.log(`x-version: ${userProperties['x-version']}`);
   }
 
   _getData2() {

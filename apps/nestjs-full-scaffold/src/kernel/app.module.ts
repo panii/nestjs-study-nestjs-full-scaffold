@@ -32,7 +32,7 @@ GlobalVars.osHostName = os.hostname();
         transport: Transport.MQTT,
         options: {
           url: 'mqtt://127.0.0.1:1883',
-          userProperties: { 'x-version': '0.1.0' },
+          // protocolVersion: 5, userProperties: { 'x-version': '0.0.0' },
         },
       },
     ]),
