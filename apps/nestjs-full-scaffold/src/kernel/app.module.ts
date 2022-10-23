@@ -1,4 +1,5 @@
 import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { RequestContextMiddleware } from 'nestjs-request-context';
 import { format, transports } from 'winston';
@@ -25,6 +26,16 @@ GlobalVars.osHostName = os.hostname();
 
 @Module({
   imports: [
+    ClientsModule.register([
+      {
+        name: 'MQTT_CLIENT',
+        transport: Transport.MQTT,
+        options: {
+          url: 'mqtt://127.0.0.1:1883',
+          userProperties: { 'x-version': '0.1.0' },
+        },
+      },
+    ]),
     // env support
     ConfigModule.forRoot({
       isGlobal: true,
@@ -55,7 +66,7 @@ GlobalVars.osHostName = os.hostname();
           };
 
           if (application_log_to_file === 'yes' && log_locale && log_timezone && application_log_dir && application_log_filename && application_error_log_filename) {
-            const instanceId = parseInt(process.env.INSTANCE_ID + ""); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
+            const instanceId = parseInt(`${process.env.INSTANCE_ID ?? 0}`); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
             const fname = `${application_log_dir}[${GlobalVars.appName}]-${application_log_filename}-cpu${instanceId}-%DATE%.json`;
             const fname2 = `${application_log_dir}[${GlobalVars.appName}]-${application_error_log_filename}-cpu${instanceId}-%DATE%.json`;
             console.log(`Application log file: ${fname}`); // pm2 logs
@@ -110,7 +121,7 @@ GlobalVars.osHostName = os.hostname();
                         printf((info) => {
                           const { level, message, metadata, timestamp } = info;
                           // console.log(info)
-                          return `${timestamp} [${metadata.label}] ${level}: ${message} ` + JSON.stringify(metadata.context) + ` ${level.indexOf('error') !== -1 ? JSON.stringify(metadata.stack) : ''}`;
+                          return `${timestamp} [${metadata.label}] ${level}: ${message} ` + JSON.stringify(metadata.context) + ` ${level.indexOf('error') !== -1 ? "\n"+metadata.stack[0] : ''}`;
                         })
                       ),
                     }),

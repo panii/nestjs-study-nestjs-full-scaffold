@@ -37,7 +37,7 @@
 ### 要有请求级别的全局变量, 如唯一的请求id(链路id)
 应该要在任意文件中获取到, 而不是把request变量到处传, 破坏代码结构. 在response的头中也添加请求id(链路id)
 ```
-> npm i nestjs-request-context
+> npm install --save nestjs-request-context
 ```
 
 ### mail
@@ -45,10 +45,17 @@
 ```
 
 ### queue
+
+#### mqtt
 ```
+> npm install --save mqtt
+> npm install --save aedes
+> npm install --save @nestjs/microservices
 ```
 
-# simple benchmark
+---
+
+# http simple benchmark
 ```
 > ab -n 10000 -c 100 (golang simple web, php simple web, symfony, nestjs, node simple web)
 ```
@@ -74,8 +81,8 @@ v19.0.0
 | nodejs 1 instance   | node_web.js  | 17471   |
 | pm2 cluster_mode 1 instance   | node_web.js  | 9933   |
 | pm2 cluster_mode 12 instance   | node_web.js  | 15057   |
-| nginx+php7.3   | symfony4-prod-mode  | 262   |
-| nginx+php7.3+opcache   | symfony4-prod-mode  | 2900   |
+| nginx+php7.3   | symfony4.4-prod-mode  | 262   |
+| nginx+php7.3+opcache   | symfony4.4-prod-mode  | 2900   |
 | nodejs 1 instance   | nestjs9  | 5220   |
 | pm2 cluster_mode 1 instance   | nestjs9  | 3712   |
 | pm2 cluster_mode 12 instance   | nestjs9  | 9522   |

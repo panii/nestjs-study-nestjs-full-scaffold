@@ -32,7 +32,12 @@ export class LoggerProxy {
   static newContext(context) {
     let addForLogger;
     if (LoggerProxy.inited) {
-      addForLogger = {request_id: RequestContext.currentContext.req.request_id, url: RequestContext.currentContext.req.url, ...GlobalVars.getForLogger()};
+      const httpContext = RequestContext.currentContext;
+      if (httpContext) {
+        addForLogger = {request_id: httpContext.req.request_id, url: httpContext.req.url, ...GlobalVars.getForLogger()};
+      } else {
+        addForLogger = GlobalVars.getForLogger();  
+      }
     } else {
       addForLogger = GlobalVars.getForLogger();
     }
