@@ -2,6 +2,7 @@ import { Controller, Get, Req, Res, HttpStatus, Inject, HttpException, UseInterc
 import { EventPattern, Transport, ClientProxy, Payload, Ctx, MqttRecordBuilder, MqttContext, RedisContext } from '@nestjs/microservices';
 import { Request, Response } from 'express';
 import { Cache } from 'cache-manager';
+import * as Redis from 'ioredis';
 
 import { AppService } from '../services/app.service';
 import { GlobalVars } from '../global.vars';
@@ -56,7 +57,17 @@ export class AppController {
     }
     const firstIsNull = await this.cacheManager.get('firstIsNull');
     console.log(firstIsNull)
-    console.log("do here")
+    console.log("do something here")
+
+    const redisClient = this.cacheManager.store.getClient() as Redis; // https://github.com/luin/ioredis
+    const bbbaaa = await redisClient.get('aaa');
+    console.log(bbbaaa);
+
+    redisClient.mset({ k1: "v1", k2: "v2" });
+
+    const mGetResult = await redisClient.mget(['k1', 'k2', 'k3']);
+    console.log(mGetResult)
+
     return data;
   }
 
