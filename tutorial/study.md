@@ -40,17 +40,28 @@
 > npm install --save nestjs-request-context
 ```
 
+### 缓存GET/SET: using redis store
+```
+> npm install --save cache-manager@4.1.0
+> npm install --save cache-manager-ioredis
+```
+
 ### mail
 ```
 ```
 
-### queue
+### broker to pub & sub
 
 #### mqtt
 ```
 > npm install --save mqtt
 > npm install --save aedes
 > npm install --save @nestjs/microservices
+```
+
+#### redis
+```
+> npm install --save ioredis
 ```
 
 ---

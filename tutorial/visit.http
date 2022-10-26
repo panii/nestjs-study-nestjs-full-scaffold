@@ -14,3 +14,11 @@ GET http://localhost:3335/nestjs-full-scaffold/should-return-not-found
 
 ###
 GET http://localhost:3335/nestjs-full-scaffold/benchmark/hello-world
+
+###
+GET http://localhost:3335/nestjs-full-scaffold/publish-mqtt-message
+
+###
+GET http://localhost:3335/nestjs-full-scaffold/publish-redis-message
+###
+GET http://localhost:3335/nestjs-full-scaffold/get-data-auto-cache-response

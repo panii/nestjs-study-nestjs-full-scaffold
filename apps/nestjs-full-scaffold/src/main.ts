@@ -17,7 +17,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.setGlobalPrefix(GlobalVars.appName);
   app.getHttpAdapter().getInstance().set('json spaces', 2); // when use express, you can globally print pretty json
-  const port = process.env.PORT || 3335;
+  const port = process.env.HTTP_PORT || 3335;
   const server = await app.listen(port);
   server.timeout = 1000 + parseInt(process.env.TCP_TIMEOUT as string); // tcp timeout set to X
   // const configService = app.get(ConfigService);
@@ -26,16 +26,33 @@ async function bootstrap() {
   Logger.log(`🚀 ${tm} Application is running on: http://localhost:${port}/${GlobalVars.appName}`);
   LoggerProxy.inited = true;
 
-  app.connectMicroservice(
-    {
-      transport: Transport.MQTT,
-      options: {
-        url: 'mqtt://127.0.0.1:1883',
-        // protocolVersion: 5,
+  console.log('process.env.MQTT_SUBSCRIBE_ENABLE', process.env.MQTT_SUBSCRIBE_ENABLE);
+  if (process.env.MQTT_SUBSCRIBE_ENABLE === 'yes') {
+    app.connectMicroservice(
+      {
+        transport: Transport.MQTT,
+        options: {
+          url: process.env.MQTT_SUBSCRIBE_URL
+          // protocolVersion: 5,
+        },
       },
-    },
-    // { inheritAppConfig: true }
-  );
+      // { inheritAppConfig: true }
+    );
+  }
+  console.log('process.env.REDIS_SUBSCRIBE_ENABLE', process.env.REDIS_SUBSCRIBE_ENABLE);
+  if (process.env.REDIS_SUBSCRIBE_ENABLE === 'yes') {
+    app.connectMicroservice(
+      {
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_SUBSCRIBE_HOST,
+          port: process.env.REDIS_SUBSCRIBE_PORT,
+          keyPrefix: process.env.REDIS_SUBSCRIBE_KEY_PREFIX,
+        },
+      },
+      // { inheritAppConfig: true }
+    );
+  }
   await app.startAllMicroservices();
 
   if (process.send) process.send('ready'); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"

@@ -7,7 +7,7 @@ import { GlobalVars } from '../global.vars';
 })
 export class ApiGetterService {
   constructor(private readonly configService: ConfigService) {
-    console.log('new instance of ApiConfigService')
+    // console.log('new instance of ApiGetterService')
   }
 
   get isAbc(): boolean { // We may also add getter functions to enable a little more natural coding style:

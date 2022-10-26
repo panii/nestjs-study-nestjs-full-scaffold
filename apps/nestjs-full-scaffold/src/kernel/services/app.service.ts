@@ -24,7 +24,7 @@ export class AppService {
   private postcodeRegex: RegExp;
 
   constructor(@Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService, private readonly configService: ConfigService, private readonly apiGetterService: ApiGetterService) {
-    console.log("new AppService");
+    // console.log("new AppService");
     if (this.apiGetterService.isAbc) {
       this.isAbc = true;
     }
