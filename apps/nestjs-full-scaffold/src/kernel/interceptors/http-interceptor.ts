@@ -18,8 +18,8 @@ export class HttpInterceptor implements NestInterceptor {
     if (request.url.startsWith(`/${GlobalVars.appName}/benchmark`)) {
       return next.handle();
     }
-
     // console.log("second priority: HttpInterceptor");
+    this.eventEmitter.emit('kernel.GotRequest', request);
     return next.handle().pipe(
       tap((data) => {
         this.eventEmitter.emit('kernel.Responsed', data);

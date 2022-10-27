@@ -1,7 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { OnEvent } from "@nestjs/event-emitter";
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Injectable({
     scope: Scope.DEFAULT // Event subscribers cannot be request-scoped.
@@ -17,8 +17,14 @@ export class HttpResponseService {
   }
 
   @OnEvent('kernel.Responsed', { async: true, nextTick: true })
-  handleHttpResponsedEvent(body: unknown) {
+  handleHttpResponsedEvent(body: any) {
     // handle and process an event
     console.log("Do log response when end response, body: ", body);
+  }
+  
+  @OnEvent('kernel.GotRequest', { async: true, nextTick: true })
+  handleGotRequestEvent(request: Request) {
+    // handle and process an event
+    console.log("Do log request when got request, url: ", request.url);
   }
 }
