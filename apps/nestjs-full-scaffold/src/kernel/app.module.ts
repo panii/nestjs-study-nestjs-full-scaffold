@@ -1,4 +1,5 @@
 import { Module, NestModule, RequestMethod, MiddlewareConsumer, CacheModule, CacheModuleOptions } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ClientsModule, ClientsModuleOptions, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { RequestContextMiddleware } from 'nestjs-request-context';
@@ -13,6 +14,7 @@ import { environment } from '../environments/environment';
 import { AppController } from './controllers/app.controller';
 import { AppService } from './services/app.service';
 import { ApiGetterService } from './services/api.getter.service';
+import { HttpResponseService } from './events/http.response.service';
 import { HttpMiddleware } from './middlewares/http-middleware';
 import baseConfiguration from './configs/base.configuration';
 import otherConfiguration from './configs/other.configuration';
@@ -36,6 +38,7 @@ GlobalVars.osHostName = os.hostname();
       cache: true, // As accessing process.env can be slow, you can set the cache property of the options object passed to ConfigModule.forRoot() to increase the performance of ConfigService#get method when it comes to variables stored in process.env
       expandVariables: true,
     }),
+    EventEmitterModule.forRoot(),
     // cache manager redis store
     CacheModule.register(
       (function (): CacheModuleOptions {
@@ -161,7 +164,7 @@ GlobalVars.osHostName = os.hostname();
                         printf((info) => {
                           const { level, message, metadata, timestamp } = info;
                           // console.log(info)
-                          return `${timestamp} [${metadata.label}] ${level}: ${message} ` + JSON.stringify(metadata.context) + ` ${level.indexOf('error') !== -1 ? '\n' + metadata.stack[0] : ''}`;
+                          return `${timestamp} [${metadata.label}] ${level}: ${message} ` + JSON.stringify(metadata.context) + ` ${level.indexOf('error') !== -1 ? '\n-----------error-----------\n' + metadata.stack[0] + '\n-----------error-----------\n' : ''}`;
                         })
                       ),
                     }),
@@ -176,7 +179,7 @@ GlobalVars.osHostName = os.hostname();
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ApiGetterService],
+  providers: [AppService, ApiGetterService, HttpResponseService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

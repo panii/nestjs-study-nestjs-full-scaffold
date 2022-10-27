@@ -40,6 +40,12 @@
 > npm install --save nestjs-request-context
 ```
 
+### 要有代码级别的事件机制, 方便多人开发
+how-to: https://progressivecoder.com/how-to-emit-and-listen-to-events-using-the-nestjs-event-emitter/
+```
+> npm install --save @nestjs/event-emitter
+```
+
 ### 缓存GET/SET: using redis store
 ```
 > npm install --save cache-manager@4.1.0

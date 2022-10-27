@@ -5,13 +5,16 @@ import { Request, Response, NextFunction } from 'express';
 export class HttpMiddleware implements NestMiddleware {
   count = 0;
   use(req: Request, res: Response, next: NextFunction) {
+    // console.log("first priority: HttpMiddleware");
     this.count++;
-    req.request_id = this.count.toString(); // todo generate request id
+    req.requestID = this.count.toString(); // todo generate request id
+    req.startTime = Date.now();
     let ip = req.socket.remoteAddress + "";
     ip = ip.toString().replace('::ffff:', ''); // todo deal http forwarded
-    Logger.log('http start', { url: req.url, ip: ip, http_method: req.method, referrer: req.get('Referrer') });
+    req.clientIP = ip;
+    Logger.log('http start');
 
-    res.header('X-Request-Id', this.count.toString());
+    res.header('X-Request-Id', req.requestID);
     next();
   }
 }

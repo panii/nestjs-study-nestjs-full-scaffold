@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Transport } from '@nestjs/microservices';
 // import { ConfigService } from '@nestjs/config';
 
@@ -12,9 +13,9 @@ import { HttpExceptionFilter } from './kernel/filters/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   LoggerProxy.proxyLogger(app);
-  app.useGlobalInterceptors(new HttpInterceptor(parseInt(process.env.HTTP_TIMEOUT as string)));
+  app.useGlobalInterceptors(new HttpInterceptor(parseInt(process.env.HTTP_TIMEOUT as string), app.get(EventEmitter2)));
   // const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(app.get(EventEmitter2)));
   app.setGlobalPrefix(GlobalVars.appName);
   app.getHttpAdapter().getInstance().set('json spaces', 2); // when use express, you can globally print pretty json
   const port = process.env.HTTP_PORT || 3335;

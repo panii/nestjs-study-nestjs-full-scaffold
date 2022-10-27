@@ -1,6 +1,5 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GlobalVars } from '../global.vars';
 
 @Injectable({
   scope: Scope.DEFAULT

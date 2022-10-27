@@ -34,9 +34,10 @@ export class LoggerProxy {
     if (LoggerProxy.inited) {
       const httpContext = RequestContext.currentContext;
       if (httpContext) {
-        addForLogger = {request_id: httpContext.req.request_id, url: httpContext.req.url, ...GlobalVars.getForLogger()};
+        const req = httpContext.req;
+        addForLogger = {request_id: req.requestID, ms: Date.now() - req.startTime, url: req.url, ip: req.clientIP, http_method: req.method, referrer: req.get('Referrer'), ...GlobalVars.getForLogger()};
       } else {
-        addForLogger = GlobalVars.getForLogger();  
+        addForLogger = GlobalVars.getForLogger();
       }
     } else {
       addForLogger = GlobalVars.getForLogger();

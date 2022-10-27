@@ -27,7 +27,7 @@ export class AppController {
     return this._getData(parseInt(req.query['duration'] as string));
   }
 
-  @Get('/exception-example')
+  @Get('/throw-http-exception-of-403')
   getException(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     throw new HttpException(
       {

@@ -1,4 +1,5 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, RequestTimeoutException, Logger } from '@nestjs/common';
+import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout, tap } from 'rxjs/operators';
 import { GlobalVars } from '../global.vars';
@@ -7,39 +8,29 @@ import { GlobalVars } from '../global.vars';
 export class HttpInterceptor implements NestInterceptor {
   static HTTP_TIMEOUT: number;
 
-  constructor(http_timeout: number) {
+  constructor(http_timeout: number, private readonly eventEmitter: EventEmitter2) {
     HttpInterceptor.HTTP_TIMEOUT = http_timeout;
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    // console.log('Before...');
     const ctx = context.switchToHttp();
     const request = ctx.getRequest<Request>();
     if (request.url.startsWith(`/${GlobalVars.appName}/benchmark`)) {
       return next.handle();
     }
 
-    const now = Date.now();
-    // const { statusCode } = context.switchToHttp().getResponse();
+    // console.log("second priority: HttpInterceptor");
     return next.handle().pipe(
-      tap((
-        // data
-        ) => {
-        // console.log({
-        //   statusCode,
-        //   data,
-        // });
-        // console.log(`After... ${Date.now() - now}ms`);
-        Logger.log('http responsed 200', {'duration': Date.now() - now});
+      tap((data) => {
+        this.eventEmitter.emit('kernel.Responsed', data);
+        Logger.log('http end 200');
       }),
       timeout(HttpInterceptor.HTTP_TIMEOUT), // http timeout set to X
       catchError((err) => {
         if (err instanceof TimeoutError) {
-          Logger.error('http responsed 408 timeout', {'duration': Date.now() - now});
           return throwError(() => new RequestTimeoutException());
         }
         return throwError(() => {
-          Logger.error('http responsed exception', err.stack, {'duration': Date.now() - now});
           return err;
         });
       })

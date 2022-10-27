@@ -56,19 +56,19 @@ export class AppService {
     an_object?: anObject;
     config_default_value: string;
   } {
-    const context = 'xxxlo';
-    this.logger.log('a log message', context);
+    const context = 'xxx';
+    // this.logger.log('a log message', context);
     Logger.log('a log message', context);
-    this.logger.warn('a warn message', context);
+    // this.logger.warn('a warn message', context);
     Logger.warn('a warn message', context);
     // this.logger.info('an info message', 'xxxlo');
-    this.logger.error('an error message', ['stack_trace1', 'stack_trace2'], {"shit": context + "_haha_error_le"});
+    // this.logger.error('an error message', ['stack_trace1', 'stack_trace2'], {"shit": context + "_haha_error_le"});
     Logger.error('an error message', ['stack_trace1', 'stack_trace2'], {"shit": context + "_haha_error_le"});
 
     // console.log(this.apiGetterService.isAbc)
 
     const context2 = { a: 'A', s: context };
-    this.logger.log('log_a_obj', context2);
+    // this.logger.log('log_a_obj', context2);
     
     Logger.log('log_a_obj', context2);
 
@@ -82,7 +82,7 @@ export class AppService {
       some_secret_key2_in_env_file: process.env.SOME_SECRET_KEY2_IN_ENV,
       some_secret_key3_in_env_file: process.env.SOME_SECRET_KEY3_IN_ENV,
       some_service_related_key: this.thisIsKernelBaseConfigurationKey,
-      request_id: RequestContext.currentContext.req.request_id,
+      request_id: RequestContext.currentContext.req.requestID,
       an_object: this.configService.get<anObject>('an_object'),
       config_default_value: this.configService.get<string>('non_exist_key', 'aaa_kkk'),
     };
