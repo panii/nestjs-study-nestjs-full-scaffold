@@ -1,0 +1,60 @@
+{
+  "name": "mqtt-aedes-broker",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mqtt-aedes-broker/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/mqtt-aedes-broker",
+        "main": "apps/mqtt-aedes-broker/src/main.ts",
+        "tsConfig": "apps/mqtt-aedes-broker/tsconfig.app.json",
+        "assets": ["apps/mqtt-aedes-broker/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/mqtt-aedes-broker/src/environments/environment.ts",
+              "with": "apps/mqtt-aedes-broker/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "options": {
+        "buildTarget": "mqtt-aedes-broker:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "mqtt-aedes-broker:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/mqtt-aedes-broker/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/mqtt-aedes-broker"],
+      "options": {
+        "jestConfig": "apps/mqtt-aedes-broker/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
