@@ -1,15 +1,19 @@
 import { Controller, Get, Req, Res, HttpStatus, Optional, Inject, HttpException, UseInterceptors, CACHE_MANAGER, CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/common';
 import { EventPattern, Transport, ClientProxy, Payload, Ctx, MqttRecordBuilder, MqttContext, RedisContext } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { Cache } from 'cache-manager';
 import * as Redis from 'ioredis'; // https://github.com/luin/ioredis
 
 import { AppService } from '../services/app.service';
 import { GlobalVars } from '../global.vars';
-import { ConfigService } from '@nestjs/config';
+import { DumpService } from '@app/nestjsjsondump';
 
 @Controller()
 export class AppController {
+  @Inject(DumpService)
+  private readonly dump: DumpService;
+
   constructor(
     private readonly appService: AppService, 
     @Optional() @Inject('MQTT_CLIENT') private readonly mqttClient: ClientProxy,
@@ -28,7 +32,8 @@ export class AppController {
   }
 
   @Get('/throw-http-exception-of-403')
-  getException(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  getException() {
+    // this.dump.json({a: new Date().toLocaleString('sv')});
     throw new HttpException(
       {
         error: 'This is a custom message',

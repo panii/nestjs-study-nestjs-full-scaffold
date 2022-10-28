@@ -6,8 +6,10 @@ import { RequestContextMiddleware } from 'nestjs-request-context';
 import { format, transports } from 'winston';
 const { combine, timestamp, metadata, label, printf, json, colorize } = format;
 import { WinstonModule } from 'nest-winston';
-import DailyRotateFile = require('winston-daily-rotate-file');
-import TransportStream = require('winston-transport');
+import * as redisStore from 'cache-manager-ioredis';
+
+import * as DailyRotateFile from 'winston-daily-rotate-file';
+import * as TransportStream from 'winston-transport';
 
 import { GlobalVars } from './global.vars';
 import { environment } from '../environments/environment';
@@ -20,7 +22,8 @@ import { HttpResponseService } from './events/http.response.service';
 import { HttpMiddleware } from './middlewares/http-middleware';
 import baseConfiguration from './configs/base.configuration';
 import otherConfiguration from './configs/other.configuration';
-import * as redisStore from 'cache-manager-ioredis';
+
+import { NestjsjsondumpModule } from '@app/nestjsjsondump';
 
 import * as os from 'os';
 
@@ -179,6 +182,7 @@ GlobalVars.osHostName = os.hostname();
         })(),
       ],
     }),
+    NestjsjsondumpModule
   ],
   controllers: [AppController],
   providers: [AppService, ApiGetterService, HttpResponseService, SsdbService, SnowFlakeV2Service],

@@ -57,6 +57,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
 
   process.on('uncaughtException', function (err) {
+    if (err.message === 'json_dump') return;
     Logger.error(err.message, err.stack);
   });
 

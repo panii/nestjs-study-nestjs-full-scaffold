@@ -69,6 +69,7 @@ export class LoggerProxy {
   }
 
   static error(message: any, trace?: string, context?: string) {
+    if (message === 'json_dump') return;
     // console.log('error---------------');
     return LoggerProxy.oldErrorFn.call(LoggerProxy.oldLogger, message, trace, LoggerProxy.newContext(context));
   }
