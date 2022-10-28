@@ -1,5 +1,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, RequestTimeoutException, Logger } from '@nestjs/common';
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { Request, Response } from 'express';
+
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout, tap } from 'rxjs/operators';
 import { GlobalVars } from '../global.vars';
@@ -14,15 +16,16 @@ export class HttpInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const ctx = context.switchToHttp();
-    const request = ctx.getRequest<Request>();
-    if (request.url.startsWith(`/${GlobalVars.appName}/benchmark`)) {
+    const req = ctx.getRequest<Request>();
+    const res = ctx.getResponse<Response>();
+    if (req.url.startsWith(`/${GlobalVars.appName}/benchmark`)) {
       return next.handle();
     }
     // console.log("second priority: HttpInterceptor");
-    this.eventEmitter.emit('kernel.GotRequest', request);
+    this.eventEmitter.emit('kernel.GotRequest', req);
     return next.handle().pipe(
-      tap((data) => {
-        this.eventEmitter.emit('kernel.Responsed', data);
+      tap((str) => {
+        this.eventEmitter.emit('kernel.Responsed', {req: req, body: str, res: res});
         Logger.log('http end 200');
       }),
       timeout(HttpInterceptor.HTTP_TIMEOUT), // http timeout set to X

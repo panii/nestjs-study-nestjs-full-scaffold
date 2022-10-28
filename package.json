@@ -23,6 +23,7 @@
     "nestjs-request-context": "^2.1.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0",
+    "simple-flakeid": "0.0.5",
     "tslib": "^2.3.0",
     "winston": "^3.8.2",
     "winston-daily-rotate-file": "^4.7.1"

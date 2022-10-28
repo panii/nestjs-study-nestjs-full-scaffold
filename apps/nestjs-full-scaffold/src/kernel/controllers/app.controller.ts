@@ -1,8 +1,8 @@
-import { Controller, Get, Req, Res, HttpStatus, Inject, HttpException, UseInterceptors, CACHE_MANAGER, CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/common';
+import { Controller, Get, Req, Res, HttpStatus, Optional, Inject, HttpException, UseInterceptors, CACHE_MANAGER, CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/common';
 import { EventPattern, Transport, ClientProxy, Payload, Ctx, MqttRecordBuilder, MqttContext, RedisContext } from '@nestjs/microservices';
 import { Request, Response } from 'express';
 import { Cache } from 'cache-manager';
-import * as Redis from 'ioredis';
+import * as Redis from 'ioredis'; // https://github.com/luin/ioredis
 
 import { AppService } from '../services/app.service';
 import { GlobalVars } from '../global.vars';
@@ -12,8 +12,8 @@ import { ConfigService } from '@nestjs/config';
 export class AppController {
   constructor(
     private readonly appService: AppService, 
-    // @Inject('MQTT_CLIENT') private readonly mqttClient: ClientProxy,
-    // @Inject('REDIS_CLIENT') private readonly redisClient: ClientProxy,
+    @Optional() @Inject('MQTT_CLIENT') private readonly mqttClient: ClientProxy,
+    @Optional() @Inject('REDIS_CLIENT') private readonly redisClient: ClientProxy,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly configService: ConfigService,
     ) {
@@ -59,14 +59,16 @@ export class AppController {
     console.log(firstIsNull)
     console.log("do something here")
 
-    const redisClient = this.cacheManager.store.getClient() as Redis; // https://github.com/luin/ioredis
-    const bbbaaa = await redisClient.get('aaa');
-    console.log(bbbaaa);
+    if (this.cacheManager.store.getClient) {
+      const redisStore = this.cacheManager.store.getClient() as Redis; // https://github.com/luin/ioredis
+      const bbbaaa = await redisStore.get('aaa');
+      console.log(bbbaaa);
 
-    redisClient.mset({ k1: "v1", k2: "v2" });
+      redisStore.mset({ k1: "v1", k2: "v2" });
 
-    const mGetResult = await redisClient.mget(['k1', 'k2', 'k3']);
-    console.log(mGetResult)
+      const mGetResult = await redisStore.mget(['k1', 'k2', 'k3']);
+      console.log(mGetResult)
+    }
 
     return data;
   }
@@ -81,8 +83,8 @@ export class AppController {
     const userProperties = { 'x-version': '1.0.0' }; // protocolVersion: 5 , only mqtt 5 support extra properties
     const record = new MqttRecordBuilder('hahaha, this is a mqtt message').setProperties({ userProperties }).setQoS(2).build();
     
-    if (this.configService.get<string>('MQTT_PUBLISH_CLIENT_ENABLE')) {
-      //this.mqttClient.emit('mqtt_event_1', record);
+    if (this.configService.get<string>('MQTT_PUBLISH_CLIENT_ENABLE') === 'yes') {
+      this.mqttClient.emit('mqtt_event_1', record);
     }
 
     return { 
@@ -93,8 +95,8 @@ export class AppController {
   
   @Get('/publish-redis-message')
   publishRedisMessage() {
-    if (this.configService.get<string>('REDIS_PUBLISH_CLIENT_ENABLE')) {
-      // this.redisClient.emit('redis_event_1', 'hahaha, this is a redis pubsub message');
+    if (this.configService.get<string>('REDIS_PUBLISH_CLIENT_ENABLE') === 'yes') {
+      this.redisClient.emit('redis_event_1', 'hahaha, this is a redis pubsub message');
     }
 
     return { 

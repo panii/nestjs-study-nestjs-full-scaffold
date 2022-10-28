@@ -14,6 +14,8 @@ import { environment } from '../environments/environment';
 import { AppController } from './controllers/app.controller';
 import { AppService } from './services/app.service';
 import { ApiGetterService } from './services/api.getter.service';
+import { SsdbService } from './services/ssdb.service';
+import { SnowFlakeV2Service } from './services/snowflakev2.service';
 import { HttpResponseService } from './events/http.response.service';
 import { HttpMiddleware } from './middlewares/http-middleware';
 import baseConfiguration from './configs/base.configuration';
@@ -78,7 +80,7 @@ GlobalVars.osHostName = os.hostname();
               transport: Transport.REDIS,
               options: {
                 host: process.env.REDIS_PUBLISH_CLIENT_HOST,
-                port: parseInt(`${process.env.REDIS_PUBLISH_CLIENT_PORT ?? 0}`)
+                port: parseInt(`${process.env.REDIS_PUBLISH_CLIENT_PORT ?? 0}`),
               },
             },
           ];
@@ -179,7 +181,7 @@ GlobalVars.osHostName = os.hostname();
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ApiGetterService, HttpResponseService],
+  providers: [AppService, ApiGetterService, HttpResponseService, SsdbService, SnowFlakeV2Service],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

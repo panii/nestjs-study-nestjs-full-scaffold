@@ -52,6 +52,11 @@ how-to: https://progressivecoder.com/how-to-emit-and-listen-to-events-using-the-
 > npm install --save cache-manager-ioredis
 ```
 
+### 雪花漂移算法生成数字id
+```
+> npm install --save simple-flakeid
+```
+
 ### mail
 ```
 ```
