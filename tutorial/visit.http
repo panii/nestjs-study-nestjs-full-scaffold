@@ -3,12 +3,19 @@ GET http://localhost:3335/nestjs-full-scaffold/env-example?duration=3000
 ###
 GET http://localhost:3335/nestjs-full-scaffold/env-example?duration=30
 
+###
+GET http://localhost:3335/nestjs-full-scaffold/dump-demo
 
+###
+GET http://localhost:3335/nestjs-full-scaffold/curl-demo
 ###
 GET http://localhost:3335/nestjs-full-scaffold/throw-http-exception-of-403
 
 ###
 GET http://localhost:3335/nestjs-full-scaffold/env-example-use-raw-response?x=2
+
+###
+GET http://localhost:3335/nestjs-full-scaffold/_profiler/req/res?x=2
 
 ###
 GET http://localhost:3335/nestjs-full-scaffold/should-return-not-found

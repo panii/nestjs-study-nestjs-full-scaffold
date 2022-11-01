@@ -1,4 +1,5 @@
 import { Module, NestModule, RequestMethod, MiddlewareConsumer, CacheModule, CacheModuleOptions } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ClientsModule, ClientsModuleOptions, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
@@ -17,6 +18,7 @@ import { AppController } from './controllers/app.controller';
 import { AppService } from './services/app.service';
 import { ApiGetterService } from './services/api.getter.service';
 import { SsdbService } from './services/ssdb.service';
+import { CurlService } from './services/curl.service';
 import { SnowFlakeV2Service } from './services/snowflakev2.service';
 import { HttpResponseService } from './events/http.response.service';
 import { HttpMiddleware } from './middlewares/http-middleware';
@@ -44,6 +46,12 @@ GlobalVars.osHostName = os.hostname();
       expandVariables: true,
     }),
     EventEmitterModule.forRoot(),
+    HttpModule.register({ // https://github.com/axios/axios
+      timeout: 3000,
+      maxRedirects: 5,
+      headers: {'X-Requested-With': 'nestjs/axios'},
+      transformResponse: x => x // don't auto parse json
+    }),
     // cache manager redis store
     CacheModule.register(
       (function (): CacheModuleOptions {
@@ -185,7 +193,7 @@ GlobalVars.osHostName = os.hostname();
     NestjsjsondumpModule
   ],
   controllers: [AppController],
-  providers: [AppService, ApiGetterService, HttpResponseService, SsdbService, SnowFlakeV2Service],
+  providers: [AppService, ApiGetterService, HttpResponseService, SsdbService, CurlService, SnowFlakeV2Service],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -194,7 +202,7 @@ export class AppModule implements NestModule {
         RequestContextMiddleware,
         HttpMiddleware // log every coming request
       )
-      .exclude(`/${GlobalVars.appName}/benchmark/(.*)`)
+      .exclude(`/${GlobalVars.appName}/benchmark/(.*)`, `/${GlobalVars.appName}/_profiler/(.*)`)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import * as Redis from 'ioredis'; // https://github.com/luin/ioredis
 
-@Injectable()
+@Injectable({
+  scope: Scope.DEFAULT
+})
 export class SsdbService {
   public ssdbStore: Redis;
   

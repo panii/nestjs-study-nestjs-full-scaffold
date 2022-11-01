@@ -12,7 +12,7 @@ export class HttpMiddleware implements NestMiddleware {
 
   count = 0;
   use(req: Request, res: Response, next: NextFunction) {
-    // console.log("first priority: HttpMiddleware");
+    console.log("first priority: HttpMiddleware");
     this.count++;
     req.requestID = this.snowFlakeV2Service.gen.NextId().toString();
 

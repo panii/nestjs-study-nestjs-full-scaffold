@@ -1,5 +1,5 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, RequestTimeoutException, Logger } from '@nestjs/common';
-import { EventEmitter2 } from "@nestjs/event-emitter";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Request, Response } from 'express';
 
 import { Observable, throwError, TimeoutError } from 'rxjs';
@@ -18,14 +18,14 @@ export class HttpInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const req = ctx.getRequest<Request>();
     const res = ctx.getResponse<Response>();
-    if (req.url.startsWith(`/${GlobalVars.appName}/benchmark`)) {
+    if (req.url.startsWith(`/${GlobalVars.appName}/benchmark`) || req.url.startsWith(`/${GlobalVars.appName}/_profiler`)) {
       return next.handle();
     }
-    // console.log("second priority: HttpInterceptor");
+    console.log("second priority: HttpInterceptor");
     this.eventEmitter.emit('kernel.GotRequest', req);
     return next.handle().pipe(
       tap((str) => {
-        this.eventEmitter.emit('kernel.Responsed', {req: req, body: str, res: res});
+        this.eventEmitter.emit('kernel.Responsed', { req: req, body: str, res: res });
         Logger.log('http end 200');
       }),
       timeout(HttpInterceptor.HTTP_TIMEOUT), // http timeout set to X

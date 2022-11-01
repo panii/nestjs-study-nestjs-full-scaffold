@@ -1,11 +1,11 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { OnEvent } from "@nestjs/event-emitter";
 import { Request, Response } from 'express';
 import * as Redis from 'ioredis'; // https://github.com/luin/ioredis
 
 import { GlobalVars } from '../global.vars';
 import { SsdbService } from '../services/ssdb.service';
+import { sprintf } from 'locutus/php/strings';
 
 interface HttpObject {
   req: Request;
@@ -17,6 +17,8 @@ interface HttpObject {
     scope: Scope.DEFAULT // Event subscribers cannot be request-scoped.
 })
 export class HttpResponseService {
+  public static KEY_OF_REQ = `%s:LOG-REQ:%s`;
+
   ssdbStore: Redis;
   
   constructor(private readonly ssdbService: SsdbService) {
@@ -50,11 +52,11 @@ export class HttpResponseService {
     }
   }
   
-  @OnEvent('kernel.GotRequest', { async: true, nextTick: true })
+  @OnEvent('kernel.GotRequest')
   async handleGotRequestEvent(req: Request) {
     // handle and process an event
     if (this.ssdbStore) {
-      await this.ssdbStore.lpush(`${GlobalVars.appName}:LOG-REQ:${new Date().toLocaleDateString('sv')}`, req.requestID + "-" + JSON.stringify({time: new Date().toLocaleString('sv'), url: req.url, ip: req.clientIP, header: req.headers}));
+      await this.ssdbStore.lpush(sprintf(HttpResponseService.KEY_OF_REQ, GlobalVars.appName, new Date().toLocaleDateString('sv')), req.requestID + "-" + JSON.stringify({time: new Date().toLocaleString('sv'), url: req.url, ip: req.clientIP, header: req.headers}));
     } else {
       console.log("Do log request when got request: ", {url: req.url, ip: req.clientIP});
     }

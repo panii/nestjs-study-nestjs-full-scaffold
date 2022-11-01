@@ -1,7 +1,8 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Request, Response } from 'express';
 import { environment } from '../../environments/environment';
+import { GlobalVars } from '../global.vars';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -9,22 +10,31 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const res = ctx.getResponse<Response>();
+    const req = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    this.eventEmitter.emit('kernel.HttpException', { req: request, body: { res: exception.getResponse(), stack: exception.stack }, res: response });
+    if (req.url.startsWith(`/${GlobalVars.appName}/benchmark`) || req.url.startsWith(`/${GlobalVars.appName}/_profiler`)) {
+      return;
+    }
+    
+    if (exception instanceof NotFoundException) {
+      // void
+    } else {
+      this.eventEmitter.emit('kernel.HttpException', { req: req, body: { res: exception.getResponse(), stack: exception.stack }, res: res });
+    }
+    
     // console.log(exception)
     if (status !== HttpStatus.OK) {
       Logger.error(`http end ${status}`, exception.stack);
 
-      response.status(status).json({
+      res.status(status).json({
         code: status,
         message: 'oops',
         detail: environment.production ? '' : exception.getResponse(),
         iso_date: new Date().toISOString(),
-        url: request.url,
-        client_ip: request.clientIP,
+        url: req.url,
+        client_ip: req.clientIP,
       });
     }
   }

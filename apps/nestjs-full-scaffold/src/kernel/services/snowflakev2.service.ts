@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { SnowflakeIdv1 } from 'simple-flakeid';
 
-@Injectable()
+@Injectable({
+  scope: Scope.DEFAULT
+})
 export class SnowFlakeV2Service {
   public gen: SnowflakeIdv1;
 

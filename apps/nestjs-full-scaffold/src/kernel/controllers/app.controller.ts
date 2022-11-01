@@ -1,5 +1,5 @@
-import { Controller, Get, Req, Res, HttpStatus, Optional, Inject, HttpException, UseInterceptors, CACHE_MANAGER, CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/common';
 import { EventPattern, Transport, ClientProxy, Payload, Ctx, MqttRecordBuilder, MqttContext, RedisContext } from '@nestjs/microservices';
+import { Controller, Get, Req, Res, HttpStatus, Optional, Inject, HttpException, UseInterceptors, CACHE_MANAGER, CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { Cache } from 'cache-manager';
@@ -33,13 +33,22 @@ export class AppController {
 
   @Get('/throw-http-exception-of-403')
   getException() {
-    // this.dump.json({a: new Date().toLocaleString('sv')});
     throw new HttpException(
       {
         error: 'This is a custom message',
       },
       HttpStatus.FORBIDDEN
     );
+  }
+
+  @Get('/dump-demo')
+  dimpDemo() {
+    this.dump.json({a: new Date().toLocaleString('sv')});
+  }
+
+  @Get('/curl-demo')
+  curlDemo() {
+    return this.appService.doCurl();
   }
 
   @Get('/env-example-use-raw-response')
@@ -135,5 +144,13 @@ export class AppController {
   }
   timeout(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  @Get('/_profiler/req/res')
+  async profilerReqRes(@Req() req: Request, @Res() res: Response) {
+    const dateStr = req.query['date'] as string || new Date().toLocaleDateString('sv');
+    const data = await this.appService.getLoggedRequestLists(dateStr)
+
+    res.header('Content-type', 'application/json; charset=utf-8').status(HttpStatus.OK).send(JSON.stringify(data, null, 2));
   }
 }

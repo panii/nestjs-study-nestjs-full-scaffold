@@ -3,11 +3,14 @@
 ### 初次建项目, 安装nx
 ```
 > npm install -g nx
-> cd 2022
+> mkdir 2022; cd 2022
 > npx create-nx-workspace
 > 输入组织名 nestjs-study-nestjs-full-scaffold
 > 选择项目为 nest
 > 输入第一个应用名 nestjs-full-scaffold
+> npm install --save-dev @nrwl/nest
+> npm install --save-dev @nrwl/node
+> npm install --save-dev @nrwl/remix
 ```
 
 ### VS Code 装nx插件
@@ -46,6 +49,21 @@ how-to: https://progressivecoder.com/how-to-emit-and-listen-to-events-using-the-
 > npm install --save @nestjs/event-emitter
 ```
 
+### 模拟symfony的dump函数, 创建一个library, 使用jquery把json美观打印出来
+```
+> npx nx g @nrwl/nest:lib nestjsjsondump
+```
+
+### http client
+```
+> npm install --save @nestjs/axios
+```
+
+### php函数 equivalent
+```
+> npm install --save locutus
+```
+
 ### 缓存GET/SET: using redis store
 ```
 > npm install --save cache-manager@4.1.0
@@ -74,6 +92,19 @@ how-to: https://progressivecoder.com/how-to-emit-and-listen-to-events-using-the-
 ```
 > npm install --save ioredis
 ```
+
+## 前端
+### remix 建项目
+https://www.npmjs.com/package/@nrwl/remix
+```
+> nx g @nrwl/remix:app remix-full-scaffold
+```
+
+### remix 创建一个路由
+```
+> nx g route web/rfs/hello-world --project=remix-full-scaffold
+```
+
 
 ---
 
