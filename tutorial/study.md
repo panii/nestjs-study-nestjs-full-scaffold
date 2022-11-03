@@ -11,6 +11,7 @@
 > npm install --save-dev @nrwl/nest
 > npm install --save-dev @nrwl/node
 > npm install --save-dev @nrwl/remix
+> npm install --save-dev tailwindcss postcss-cli postcss autoprefixer
 ```
 
 ### VS Code 装nx插件
@@ -98,6 +99,7 @@ how-to: https://progressivecoder.com/how-to-emit-and-listen-to-events-using-the-
 https://www.npmjs.com/package/@nrwl/remix
 ```
 > nx g @nrwl/remix:app remix-full-scaffold
+> npx nx run remix-full-scaffold:generatecss
 ```
 
 ### remix 创建一个路由

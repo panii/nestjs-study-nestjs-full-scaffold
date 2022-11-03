@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "remix-full-scaffold",
+  "sourceRoot": "apps/remix-full-scaffold",
+  "projectType": "application",
+  "tags": []
+}
