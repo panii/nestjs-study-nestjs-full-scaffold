@@ -11,7 +11,7 @@
 > npm install --save-dev @nrwl/nest
 > npm install --save-dev @nrwl/node
 > npm install --save-dev @nrwl/remix
-> npm install --save-dev tailwindcss postcss-cli postcss autoprefixer
+> npm install --save-dev tailwindcss postcss-cli postcss autoprefixer concurrently
 ```
 
 ### VS Code 装nx插件
@@ -100,6 +100,7 @@ https://www.npmjs.com/package/@nrwl/remix
 ```
 > nx g @nrwl/remix:app remix-full-scaffold
 > npx nx run remix-full-scaffold:generatecss
+> npm install --save daisyui
 ```
 
 ### remix 创建一个路由
