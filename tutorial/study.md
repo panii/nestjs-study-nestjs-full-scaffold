@@ -100,7 +100,19 @@ https://www.npmjs.com/package/@nrwl/remix
 ```
 > nx g @nrwl/remix:app remix-full-scaffold
 > npx nx run remix-full-scaffold:generatecss
-> npm install --save daisyui
+> npm install --save remix-utils // https://github.com/sergiodxa/remix-utils
+> npm install --save daisyui // https://daisyui.com
+> npm install --save flowbite // https://flowbite.com/docs/getting-started/quickstart/
+> //npm install --save flowbite-react // https://flowbite-react.com/
+> npm install --save @heroicons/react // https://heroicons.com/
+> npm install --save @prisma/client
+> npm install --save-dev prisma
+> npx prisma init --datasource-provider sqlite
+> npx prisma db push
+> npx prisma generate
+> npx prisma studio
+
+
 ```
 
 ### remix 创建一个路由
