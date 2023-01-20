@@ -20,6 +20,7 @@ import { ApiGetterService } from './services/api.getter.service';
 import { SsdbService } from './services/ssdb.service';
 import { CurlService } from './services/curl.service';
 import { SnowFlakeV2Service } from './services/snowflakev2.service';
+import { PrismaService } from './services/prisma.service';
 import { HttpResponseService } from './events/http.response.service';
 import { HttpMiddleware } from './middlewares/http-middleware';
 import baseConfiguration from './configs/base.configuration';
@@ -193,7 +194,7 @@ GlobalVars.osHostName = os.hostname();
     NestjsjsondumpModule
   ],
   controllers: [AppController],
-  providers: [AppService, ApiGetterService, HttpResponseService, SsdbService, CurlService, SnowFlakeV2Service],
+  providers: [AppService, ApiGetterService, HttpResponseService, SsdbService, CurlService, SnowFlakeV2Service, PrismaService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

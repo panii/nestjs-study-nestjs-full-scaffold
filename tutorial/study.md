@@ -116,6 +116,7 @@ https://www.npmjs.com/package/@nrwl/remix
 > npm install --save @fortawesome/free-solid-svg-icons
 > npm install --save @fortawesome/free-regular-svg-icons
 > npm install --save @fortawesome/react-fontawesome@latest
+> npm install --save lodash.debounce
 > npm install --save antd
 
 
