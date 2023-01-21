@@ -9,6 +9,7 @@ import { GlobalVars } from '../global.vars';
 import { ApiGetterService } from './api.getter.service';
 import { CurlService } from './curl.service';
 import { SsdbService } from './ssdb.service';
+import { PrismaService } from './prisma.service';
 import { environment } from '../../environments/environment';
 import { HttpResponseService } from '../events/http.response.service';
 import { sprintf } from 'locutus/php/strings';
@@ -33,6 +34,9 @@ export class AppService {
 
   @Inject(SsdbService)
   private readonly ssdbService: SsdbService;
+
+  @Inject(PrismaService)
+  private readonly prismaService: PrismaService;
 
   constructor(@Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService, private readonly configService: ConfigService, private readonly apiGetterService: ApiGetterService) {
     // console.log("new AppService");
@@ -120,6 +124,13 @@ export class AppService {
       curl_json: { status: status3, statusText: statusText3, data: data3, error: status2 === 'error' },
       curl_file: { status: status4, statusText: statusText4, data: data4, error: status4 === 'error' },
     };
+  }
+
+  async getUser() {
+    await this.prismaService.user.create({data: {username: Math.random()+""}});
+    return {
+      user: await this.prismaService.user.findMany({where: {id: {gt: 0}}, take: 10, orderBy: {id: "desc"}})
+    }
   }
 
   async getLoggedRequestLists(dateStr: string) {

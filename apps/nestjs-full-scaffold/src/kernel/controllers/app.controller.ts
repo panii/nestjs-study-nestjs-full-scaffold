@@ -24,11 +24,21 @@ export class AppController {
 
     }
 
+  // @Get('/favicon.ico')
+  // favicon(@Req() req: Request, @Res() res: Response) {
+  //   res.header('Content-type', 'image/png;').status(HttpStatus.OK).send(Buffer.from("iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEU0OkArMjhobHEoPUPFEBIuO0L+AAC2FBZ2JyuNICOfGx7xAwTjCAlCNTvVDA1aLzQ3COjMAAAAVUlEQVQI12NgwAaCDSA0888GCItjn0szWGBJTVoGSCjWs8TleQCQYV95evdxkFT8Kpe0PLDi5WfKd4LUsN5zS1sKFolt8bwAZrCaGqNYJAgFDEpQAAAzmxafI4vZWwAAAABJRU5ErkJggg==", "base64"));
+  // }
+
   @Get('/env-example')
   getData(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     res.header('Name', AppController.name);
     res.status(HttpStatus.OK);
     return this._getData(parseInt(req.query['duration'] as string));
+  }
+
+  @Get('/prisma-example')
+  getUser() {
+    return this.appService.getUser();
   }
 
   @Get('/throw-http-exception-of-403')
