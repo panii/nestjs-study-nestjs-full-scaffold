@@ -6,7 +6,7 @@ module.exports = {
       name: 'nestjs-full-scaffold', // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
       error_file: '/tmp/pm2_nestjs-full-scaffold_err.log', // error file path (default to $HOME/.pm2/logs/XXXerr.log)
       out_file: '/tmp/pm2_nestjs-full-scaffold_out.log', // output file path (default to $HOME/.pm2/logs/XXXout.log)
-      instances: 'max',
+      instances: 'max', // use 'max' or 1 2 3 4 ...
       exec_mode: 'cluster',
       script: './dist/apps/nestjs-full-scaffold/main.js',
       // cwd: "/var/www/",

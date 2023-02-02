@@ -32,6 +32,8 @@ import * as os from 'os';
 
 import { sep, resolve } from 'path';
 
+console.log(new Date())
+
 GlobalVars.appName = __dirname.split(sep).pop() as string;
 GlobalVars.processId = process.pid + '';
 GlobalVars.osHostName = os.hostname();
@@ -124,8 +126,8 @@ GlobalVars.osHostName = os.hostname();
 
           if (application_log_enable === 'yes' && log_locale && log_timezone && application_log_dir && application_log_filename && application_error_log_filename) {
             const instanceId = parseInt(`${process.env.INSTANCE_ID ?? 0}`); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
-            const fname = `${application_log_dir}[${GlobalVars.appName}]-${application_log_filename}-cpu${instanceId}-%DATE%.json`;
-            const fname2 = `${application_log_dir}[${GlobalVars.appName}]-${application_error_log_filename}-cpu${instanceId}-%DATE%.json`;
+            const fname = `${application_log_dir}${GlobalVars.appName}-%DATE%-${application_log_filename}-instance-${instanceId}.json`;
+            const fname2 = `${application_log_dir}${GlobalVars.appName}-%DATE%-${application_error_log_filename}-instance-${instanceId}.json`;
             console.log(`Application log file: ${fname}`); // pm2 logs
             console.log(`Application error log file: ${fname2}`);
 
