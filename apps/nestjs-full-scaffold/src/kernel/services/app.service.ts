@@ -126,10 +126,15 @@ export class AppService {
     };
   }
 
-  async getUser() {
+  async getUser(c: any) {
+    if (c) {
+      return {
+        count: await this.prismaService.user.count({where: {id: {gt: 0}}})
+      }  
+    }
     await this.prismaService.user.create({data: {username: Math.random()+""}});
     return {
-      user: await this.prismaService.user.findMany({where: {id: {gt: 0}}, take: 10, orderBy: {id: "desc"}})
+      user: await this.prismaService.user.findMany({where: {id: {lte: 680}}, take: 10, orderBy: {id: "desc"}})
     }
   }
 

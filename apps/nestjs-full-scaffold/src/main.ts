@@ -19,6 +19,8 @@ async function bootstrap() {
   app.setGlobalPrefix(GlobalVars.appName);
   app.getHttpAdapter().getInstance().set('json spaces', 2); // when use express, you can globally print pretty json
   const port = process.env.HTTP_PORT || 3335;
+  // Starts listening for shutdown hooks
+  app.enableShutdownHooks();
   const server = await app.listen(port);
   server.timeout = 1000 + parseInt(process.env.TCP_TIMEOUT as string); // tcp timeout set to X
   // const configService = app.get(ConfigService);
@@ -56,10 +58,15 @@ async function bootstrap() {
   }
   await app.startAllMicroservices();
 
+  
   process.on('uncaughtException', function (err) {
     if (err.message === 'json_dump') return;
     Logger.error(err.message, err.stack);
   });
+
+  // process.on('uncaughtExceptionMonitor', (err, origin) => {
+  //   Logger.error(err.message, err.stack);
+  // });
 
   if (process.send) process.send('ready'); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
 }

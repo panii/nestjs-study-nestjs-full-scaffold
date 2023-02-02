@@ -37,7 +37,7 @@ export class HttpResponseService {
     if (this.ssdbStore) {
       await this.ssdbStore.hset(`${GlobalVars.appName}:LOG-RES:${new Date().toLocaleDateString('sv')}`, `response-${httpOpject.req.requestID}`, httpOpject.res.statusCode + '-' + JSON.stringify(httpOpject.body));
     }
-    console.log("Do error push notify when HttpException occured, statusCode: " + httpOpject.res.statusCode)
+    // console.log("Do error push notify when HttpException occured, statusCode: " + httpOpject.res.statusCode)
   }
 
   @OnEvent('kernel.Responsed', { async: true, nextTick: true }) // this will not trigger if the controller use the raw express response send function
@@ -48,7 +48,7 @@ export class HttpResponseService {
       await this.ssdbStore.hset(`${GlobalVars.appName}:LOG-RES:${new Date().toLocaleDateString('sv')}`, `response-${httpOpject.req.requestID}`, code + '-' + JSON.stringify(httpOpject.body));
       // hmset
     } else {
-      console.log("Do log response when end response, body: ", httpOpject.body);
+      // console.log("Do log response when end response, body: ", httpOpject.body);
     }
   }
   
@@ -58,7 +58,7 @@ export class HttpResponseService {
     if (this.ssdbStore) {
       await this.ssdbStore.lpush(sprintf(HttpResponseService.KEY_OF_REQ, GlobalVars.appName, new Date().toLocaleDateString('sv')), req.requestID + "-" + JSON.stringify({time: new Date().toLocaleString('sv'), url: req.url, ip: req.clientIP, header: req.headers}));
     } else {
-      console.log("Do log request when got request: ", {url: req.url, ip: req.clientIP});
+      // console.log("Do log request when got request: ", {url: req.url, ip: req.clientIP});
     }
   }
 }

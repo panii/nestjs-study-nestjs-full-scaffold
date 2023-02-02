@@ -37,8 +37,8 @@ export class AppController {
   }
 
   @Get('/prisma-example')
-  getUser() {
-    return this.appService.getUser();
+  getUser(@Req() req: Request) {
+    return this.appService.getUser(req.query['count']);
   }
 
   @Get('/throw-http-exception-of-403')
