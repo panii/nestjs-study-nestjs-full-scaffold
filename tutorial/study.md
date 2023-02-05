@@ -16,11 +16,11 @@
 
 ### VS Code 装nx插件
 ```
-> nx serve  (nx run nestjs-full-scaffold:serve)
-> 访问 http://localhost:3335/nestjs-full-scaffold/benchmark/hello-world
-
-> nx build nestjs-full-scaffold --configuration production
+> npx nx serve nestjs-full-scaffold
+> npx nx build nestjs-full-scaffold --configuration=production
+> curl http://localhost:3335/nestjs-full-scaffold/benchmark/hello-world
 > 运行正式项目 `node dist/apps/nestjs-full-scaffold/main.js`
+> 运行正式项目 `pm2 start ecosystem.config.js --only "nestjs-full-scaffold"`
 ```
 
 ### 拥有 .env 的能力
@@ -132,7 +132,8 @@ https://www.npmjs.com/package/@nrwl/remix
 
 # http simple benchmark
 ```
-> ab -n 10000 -c 100 (golang simple web, php simple web, symfony, nestjs, node simple web)
+> ab -n 10000 -c 100 http://localhost:3335/nestjs-full-scaffold/benchmark/hello-world
+// using (golang simple web, php simple web, symfony, nestjs, node simple web)
 ```
 
 ### uname -r
