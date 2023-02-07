@@ -12,10 +12,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnAppli
   }
 
   async onApplicationShutdown(signal: string) {
-    Logger.log('PrismaService onApplicationShutdown ' + signal);
+    console.log('PrismaService ---------------------- onApplicationShutdown ' + signal);
     // console.log('PrismaService onApplicationShutdown ', signal); // e.g. "SIGINT"
     // await this.timeout(5000);
-    await this.$disconnect();
+    if (process.env.DB_PRISMA_ENABLE === 'yes') {
+      await this.$disconnect();
+    }
   }
   
   timeout(ms: number) {

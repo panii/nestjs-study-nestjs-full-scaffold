@@ -19,8 +19,6 @@ async function bootstrap() {
   app.setGlobalPrefix(GlobalVars.appName);
   app.getHttpAdapter().getInstance().set('json spaces', 2); // when use express, you can globally print pretty json
   const port = process.env.HTTP_PORT || 3335;
-  // Starts listening for shutdown hooks
-  app.enableShutdownHooks();
   const server = await app.listen(port);
   server.timeout = 1000 + parseInt(process.env.TCP_TIMEOUT as string); // tcp timeout set to X
   // const configService = app.get(ConfigService);
@@ -67,6 +65,20 @@ async function bootstrap() {
   // process.on('uncaughtExceptionMonitor', (err, origin) => {
   //   Logger.error(err.message, err.stack);
   // });
+
+  process.on('SIGINT', function (signal) {
+    console.log(`Caught ${signal}, gracefully shutting down`);
+  
+    // stop the server from accepting new connections
+    server.close(function () {
+      // once the server is not accepting connections, exit
+      setTimeout(async function(){
+        console.log('All requests stopped, shutting down');
+        await app.close();
+        process.exit(0);
+      }, 2000)
+    });
+  });
 
   if (process.send) process.send('ready'); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
 }
