@@ -197,6 +197,7 @@ GlobalVars.osHostName = os.hostname();
   ],
   controllers: [AppController],
   providers: [AppService, ApiGetterService, HttpResponseService, SsdbService, CurlService, SnowFlakeV2Service, PrismaService],
+  exports: [SsdbService, CurlService, SnowFlakeV2Service, PrismaService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -14,7 +14,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const req = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
+    const ret = {
+      code: status,
+      message: 'oops',
+      detail: environment.production ? '' : exception.getResponse(),
+      iso_date: new Date().toISOString(),
+      url: req.url,
+      client_ip: req.clientIP,
+    };
+
     if (req.url.startsWith(`/${GlobalVars.appName}/benchmark`) || req.url.startsWith(`/${GlobalVars.appName}/_profiler`)) {
+      res.status(status).json(ret);
       return;
     }
     
@@ -28,14 +38,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (status !== HttpStatus.OK) {
       Logger.error(`http end ${status}`, exception.stack);
 
-      res.status(status).json({
-        code: status,
-        message: 'oops',
-        detail: environment.production ? '' : exception.getResponse(),
-        iso_date: new Date().toISOString(),
-        url: req.url,
-        client_ip: req.clientIP,
-      });
+      res.status(status).json(ret);
     }
   }
 }
