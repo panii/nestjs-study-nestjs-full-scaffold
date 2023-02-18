@@ -27,7 +27,7 @@ export class CurlService {
   }
 
   async curlGet(url: string, params: { [key: string]: any } = {}, headers: Record<string, string | number | boolean> = {}) {
-    const url2 = Object.keys(params).length === 0 ? url : url.includes('?') ? url + '&' + qs.stringify(params) : url + '?' + qs.stringify(params);
+    const url2 = Object.keys(params).length === 0 ? url : url.includes('?') ? url + '&' + qs.stringify(params, {arrayFormat: 'repeat'}) : url + '?' + qs.stringify(params, {arrayFormat: 'repeat'});
 
     await this.logCurlRequest('GET', url2, {}, headers);
 
@@ -35,7 +35,11 @@ export class CurlService {
       // <<"GET /cats HTTP/1.1\r\nAccept: application/json, text/plain, */*\r\nX-Requested-With: nestjs/axios\r\nUser-Agent: axios/0.27.2\r\nHost: localhost:8888\r\nConnection: close\r\n\r\n">>
       this.httpService.get<string>(url2, { headers: headers }).pipe(
         catchError((error) => {
-          return of({ status: 'error', statusText: error.message, headers: {}, data: 'curl error, see statusText' });
+          if (error.response) {
+            const {status, statusText, data, headers} = error.response;
+            return of({status, statusText, data, headers});
+          }
+          return of({ status: 'error', statusText: error.message, headers: {}, data: 'connection error, see statusText' });
         })
       )
     );
@@ -58,7 +62,11 @@ export class CurlService {
       // <<"POST /cats HTTP/1.1\r\nAccept: application/json, text/plain, */*\r\nContent-Type: application/x-www-form-urlencoded\r\nX-Requested-With: nestjs/axios\r\nUser-Agent: axios/0.27.2\r\nContent-Length: 3\r\nHost: localhost:8888\r\nConnection: close\r\n\r\na=A">>
       this.httpService.post<string>(url, qs.stringify(params), { headers: headers }).pipe(
         catchError((error) => {
-          return of({ status: 'error', statusText: error.message, headers: {}, data: 'curl error, see statusText' });
+          if (error.response) {
+            const {status, statusText, data, headers} = error.response;
+            return of({status, statusText, data, headers});
+          }
+          return of({ status: 'error', statusText: error.message, headers: {}, data: 'connection error, see statusText' });
         })
       )
     );
@@ -74,7 +82,11 @@ export class CurlService {
       // <<"POST /cats HTTP/1.1\r\nAccept: application/json, text/plain, */*\r\nContent-Type: application/json\r\nX-Requested-With: nestjs/axios\r\nUser-Agent: axios/0.27.2\r\nContent-Length: 9\r\nHost: localhost:8888\r\nConnection: close\r\n\r\n{\"a\":\"A\"}">>
       this.httpService.post<string>(url, params, { headers: headers }).pipe(
         catchError((error) => {
-          return of({ status: 'error', statusText: error.message, headers: {}, data: 'curl error, see statusText' });
+          if (error.response) {
+            const {status, statusText, data, headers} = error.response;
+            return of({status, statusText, data, headers});
+          }
+          return of({ status: 'error', statusText: error.message, headers: {}, data: 'connection error, see statusText' });
         })
       )
     );
@@ -140,6 +152,10 @@ Content-Type: application/json
       // <<"POST /cats HTTP/1.1\r\nAccept: application/json, text/plain, */*\r\nContent-Type: application/json\r\nX-Requested-With: nestjs/axios\r\nUser-Agent: axios/0.27.2\r\nContent-Length: 9\r\nHost: localhost:8888\r\nConnection: close\r\n\r\n{\"a\":\"A\"}">>
       this.httpService.post<string>(url, formData, { headers: headers }).pipe(
         catchError((error) => {
+          if (error.response) {
+            const {status, statusText, data, headers} = error.response;
+            return of({status, statusText, data, headers});
+          }
           return of({ status: 'error', statusText: error.message, headers: {}, data: 'curl error, see statusText' });
         })
       )
@@ -157,6 +173,8 @@ Content-Type: application/json
       const req = httpContext.req;
       await this.ssdbStore.lpush(`${GlobalVars.appName}:CURL-SERVICE:${req.requestID}`, 'Req-' + JSON.stringify({ method: method, url: url, params: params, headers: headers }));
     }
+    // const req = httpContext.req;
+    // console.log(`${GlobalVars.appName}:CURL-SERVICE:${req.requestID}`, 'Req-' + JSON.stringify({ method: method, url: url, params: params, headers: headers }));
   }
 
   async logCurlResponse({status, statusText, data, headers})
@@ -166,5 +184,7 @@ Content-Type: application/json
       const req = httpContext.req;
       await this.ssdbStore.lpush(`${GlobalVars.appName}:CURL-SERVICE:${req.requestID}`, 'Res-' + JSON.stringify({status, statusText, data, headers}));
     }
+    // const req = httpContext.req;
+    // console.log(`${GlobalVars.appName}:CURL-SERVICE:${req.requestID}`, 'Res-' + JSON.stringify({status, statusText, data, headers}));
   }
 }

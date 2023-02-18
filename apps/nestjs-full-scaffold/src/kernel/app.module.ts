@@ -28,6 +28,8 @@ import otherConfiguration from './configs/other.configuration';
 
 import { NestjsjsondumpModule } from '@app/nestjsjsondump';
 
+import Modules from '../modules/modules';
+
 import * as os from 'os';
 
 import { sep, resolve } from 'path';
@@ -193,7 +195,9 @@ GlobalVars.osHostName = os.hostname();
         })(),
       ],
     }),
-    NestjsjsondumpModule
+    NestjsjsondumpModule,
+
+    ...Modules,
   ],
   controllers: [AppController],
   providers: [AppService, ApiGetterService, HttpResponseService, SsdbService, CurlService, SnowFlakeV2Service, PrismaService],
