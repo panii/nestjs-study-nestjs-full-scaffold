@@ -7,6 +7,7 @@ declare global {
       requestID?: string;
       clientIP?: string;
       startTime?: number;
+      userId?: number;
     }
   }
 }

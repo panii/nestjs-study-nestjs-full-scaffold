@@ -56,7 +56,6 @@ async function bootstrap() {
   }
   await app.startAllMicroservices();
 
-  
   process.on('uncaughtException', function (err) {
     if (err.message === 'json_dump') return;
     Logger.error(err.message, err.stack);
@@ -80,7 +79,7 @@ async function bootstrap() {
     });
   });
 
-  if (process.send) process.send('ready'); // pm2 start ecosystem.config.js --only "nestjs-full-scaffold"
+  if (process.send) process.send('ready');
 }
 
 bootstrap();

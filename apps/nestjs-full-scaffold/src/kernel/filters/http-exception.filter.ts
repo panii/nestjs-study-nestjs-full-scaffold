@@ -14,11 +14,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const req = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
+    const responseOfError = exception.getResponse();
     const ret = {
+      success: false,
       code: status,
-      message: 'oops',
+      message: responseOfError["message"] ?? 'oops',
       detail: environment.production ? '' : exception.getResponse(),
-      iso_date: new Date().toISOString(),
       url: req.url,
       client_ip: req.clientIP,
     };
@@ -35,10 +36,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
     
     // console.log(exception)
-    if (status !== HttpStatus.OK) {
-      Logger.error(`http end ${status}`, exception.stack);
-
-      res.status(status).json(ret);
+    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+      Logger.error(`http end ${status}`, exception.stack, responseOfError);
+    } else {
+      Logger.log(`http end ${status} false`);
     }
+
+    res.status(status).json(ret);
   }
 }
