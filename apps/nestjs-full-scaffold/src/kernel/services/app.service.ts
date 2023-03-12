@@ -15,6 +15,7 @@ import { HttpResponseService } from '../events/http.response.service';
 import { sprintf } from 'locutus/php/strings';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
+import * as crypto from "crypto"
 
 interface anObject {
   str: string;
@@ -141,5 +142,13 @@ export class AppService {
   async getLoggedRequestLists(dateStr: string) {
     const reqKey = sprintf(HttpResponseService.KEY_OF_REQ, GlobalVars.appName, dateStr);
     return await this.ssdbService.ssdbStore.lrange(reqKey, 0, -1);
+  }
+
+  generateToken(ori: string, timestam: any) {
+    const secret = process.env.JWT_TOKEN_SECRET as string;
+    const sha256 = crypto.createHmac("SHA256", secret);
+    const timestamp = timestam ?? new Date().getTime();
+    const mychecksum = sha256.update(`${ori}${timestamp}`).digest('hex');
+    return `${ori}.${timestamp}.${mychecksum}`;
   }
 }
