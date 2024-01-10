@@ -162,3 +162,4 @@ v19.0.0
 | nodejs 1 instance   | nestjs9  | 5220   |
 | pm2 cluster_mode 1 instance   | nestjs9  | 3712   |
 | pm2 cluster_mode 12 instance   | nestjs9  | 9522   |
+| java21 1 instance   | spring boot Hello World  | 28769   |

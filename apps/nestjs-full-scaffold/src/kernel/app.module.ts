@@ -64,7 +64,7 @@ GlobalVars.osHostName = os.hostname();
         if (process.env.CACHE_MANAGER_REDIS_ENABLE === 'yes') {
           return { isGlobal: true, store: redisStore, host: process.env.CACHE_MANAGER_REDIS_HOST, port: process.env.CACHE_MANAGER_REDIS_PORT, keyPrefix: process.env.CACHE_MANAGER_REDIS_KEY_PREFIX };
         } else {
-          return {};
+          return { isGlobal: true };
         }
       })()
     ),

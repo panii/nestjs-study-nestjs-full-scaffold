@@ -29,4 +29,4 @@ GET http://localhost:3335/nestjs-full-scaffold/publish-mqtt-message
 ###
 GET http://localhost:3335/nestjs-full-scaffold/publish-redis-message?x=2
 ###
-GET http://localhost:3335/nestjs-full-scaffold/get-data-auto-cache-response
+GET http://localhost:3335/nestjs-full-scaffold/get-data-auto-cache-response/abc?a=1

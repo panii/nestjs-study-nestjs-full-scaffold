@@ -1,5 +1,5 @@
 import { EventPattern, Transport, ClientProxy, Payload, Ctx, MqttRecordBuilder, MqttContext, RedisContext } from '@nestjs/microservices';
-import { Controller, Get, Req, Res, HttpStatus, Optional, Inject, HttpException, UseInterceptors, CACHE_MANAGER, CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/common';
+import { Controller, Get, Param, Req, Res, HttpStatus, Optional, Inject, HttpException, UseInterceptors, CACHE_MANAGER, CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { Cache } from 'cache-manager';
@@ -71,14 +71,18 @@ export class AppController {
     res.header('Content-type', 'application/json; charset=utf-8').status(HttpStatus.OK).send(JSON.stringify(data, null, 2));
   }
 
-  @Get('/get-data-auto-cache-response')
+  @Get('/get-data-auto-cache-response/:id/*')
   @UseInterceptors(CacheInterceptor) // Only GET endpoints are cached. Also, HTTP server routes that inject the native response object (@Res()) cannot use the Cache Interceptor
-  @CacheKey('get-data-auto-cache-response-cache')
+  //@CacheKey('get-data-auto-cache-response-cache')
   @CacheTTL(20)
-  async getDataAutoCache() {
+  async getDataAutoCache(@Param() params, @Req() req: Request) {
     const data = {
       message: new Date().toISOString(),
+      id: params.id,
+      a: req.query['a'] ?? 'a=null'
     }
+    console.log('params.id: ' + params.id);
+    console.log('query.a: ', req.query['a']);
     const firstIsNull = await this.cacheManager.get('firstIsNull');
     console.log(firstIsNull)
     console.log("do something here")
